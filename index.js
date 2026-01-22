@@ -27,7 +27,6 @@ async function run() {
     const db = client.db("bookDB");
     const bookCollection = db.collection("bookHaven");
 
-    
     app.get("/books", async (req, res) => {
       const sortOrder = req.query.sort === "asc" ? 1 : -1;
       const result = await bookCollection
@@ -37,8 +36,15 @@ async function run() {
       res.send(result);
     });
 
-   
-   
+    app.get("/latest-books", async (req, res) => {
+      const result = await bookCollection
+        .find()
+        .sort({ _id: -1 })
+        .limit(6)
+        .toArray();
+      res.send(result);
+    });
+
     console.log("Connected to MongoDB!");
   } finally {
   }
