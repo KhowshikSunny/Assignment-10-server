@@ -70,6 +70,29 @@ async function run() {
       res.send(result);
     });
 
+
+
+    app.put("/update-book/:id", async (req, res) => {
+      const id = req.params.id;
+      const updatedBook = req.body;
+      const filter = { _id: new ObjectId(id) };
+      const updateDoc = { $set: updatedBook };
+      const result = await bookCollection.updateOne(filter, updateDoc);
+      res.send(result);
+    });
+
+    
+    app.patch("/add-comment/:id", async (req, res) => {
+      const id = req.params.id;
+      const comment = req.body;
+      const result = await bookCollection.updateOne(
+        { _id: new ObjectId(id) },
+        { $push: { comments: comment } },
+      );
+      res.send(result);
+    });
+
+
     console.log("Connected to MongoDB!");
   } finally {
   }
