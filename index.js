@@ -1,19 +1,17 @@
-const { MongoClient, ServerApiVersion } = require("mongodb");
 const express = require("express");
 const cors = require("cors");
-const app = express();
-const port = 3000;
+const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+require("dotenv").config();
 
+const app = express();
+const port = process.env.PORT || 5000;
+
+// Middleware
 app.use(cors());
 app.use(express.json());
 
-// IMegHHjcASAme0Ja
-// book-heaven
-
-const uri =
-  "mongodb+srv://book-heaven:IMegHHjcASAme0Ja@cluster0.xuoqyn9.mongodb.net/?appName=Cluster0";
-
-// Create a MongoClient with a MongoClientOptions object to set the Stable API version
+// MongoDB Connection
+const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.xuoqyn9.mongodb.net/?appName=Cluster0`;
 const client = new MongoClient(uri, {
   serverApi: {
     version: ServerApiVersion.v1,
@@ -29,27 +27,23 @@ async function run() {
     const db = client.db("bookDB");
     const bookCollection = db.collection("bookHaven");
 
-    app.get("/all-books", async (req, res) => {
-      const result = await bookCollection.find().toArray();
-      console.log("result:", result);
+    
+    app.get("/books", async (req, res) => {
+      const sortOrder = req.query.sort === "asc" ? 1 : -1;
+      const result = await bookCollection
+        .find()
+        .sort({ rating: sortOrder })
+        .toArray();
       res.send(result);
     });
 
-    await client.db("admin").command({ ping: 1 });
-    console.log(
-      "Pinged your deployment. You successfully connected to MongoDB!",
-    );
+   
+   
+    console.log("Connected to MongoDB!");
   } finally {
-    // Ensures that the client will close when you finish/error
-    // await client.close();
   }
 }
 run().catch(console.dir);
 
-app.get("/", (req, res) => {
-  res.send("Hello World!");
-});
-
-app.listen(port, () => {
-  console.log(`Server is listening on port ${port}`);
-});
+app.get("/", (req, res) => res.send("The Book Haven Server is running"));
+app.listen(port, () => console.log(`Server running on port ${port}`));
