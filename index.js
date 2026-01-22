@@ -63,6 +63,13 @@ async function run() {
       res.send(result);
     });
 
+    app.delete("/delete-book/:id", async (req, res) => {
+      const result = await bookCollection.deleteOne({
+        _id: new ObjectId(req.params.id),
+      });
+      res.send(result);
+    });
+
     console.log("Connected to MongoDB!");
   } finally {
   }
