@@ -57,6 +57,12 @@ async function run() {
       res.send(result);
     });
 
+    app.get("/my-books/:email", async (req, res) => {
+      const email = req.params.email;
+      const result = await bookCollection.find({ userEmail: email }).toArray();
+      res.send(result);
+    });
+
     console.log("Connected to MongoDB!");
   } finally {
   }
