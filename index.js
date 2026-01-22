@@ -44,14 +44,18 @@ async function run() {
         .toArray();
       res.send(result);
     });
-    
+
     app.get("/book/:id", async (req, res) => {
       const id = req.params.id;
       const result = await bookCollection.findOne({ _id: new ObjectId(id) });
       res.send(result);
     });
 
-    
+    app.post("/add-book", async (req, res) => {
+      const book = req.body;
+      const result = await bookCollection.insertOne(book);
+      res.send(result);
+    });
 
     console.log("Connected to MongoDB!");
   } finally {
